@@ -108,6 +108,34 @@ class Button:
         self.image=image
         self.rect=self.image.get_rect()
         self.rect.topleft=(x,y)
+    
+    def draw(self):
+        action=False
+        #get mouse postion
+        pos=pygame.mouse.get_pos()
+        #check mouse over an clicked conditions
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0]==1:
+                action=True
+        screen.blit(self.image,(self.rect.x,self.rect.y))
+        return action
+
+pipe_group=pygame.sprite.Group()
+bird_group=pygame.sprite.Group()
+flappy=Bird(100,int(HEIGHT/2))
+bird_group.add(flappy)
+restart_btn=Button(WIDTH/2-50,HEIGHT/2-50,restart_img)
+
+#main game loop
+running=True
+
+while running:
+
+    clock.tick(FPS)
+    screen.blit(bg,(0,0))
+    
+
+
 
 
     
