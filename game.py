@@ -35,6 +35,13 @@ def draw_score(text,font,green,x,y):
     score_text=font.render(text,True,green)
     screen.blit(score_text,(x,y))
 
+def reset_game():
+    pipe_group.empty()
+    flappy.rect.x=100
+    flappy.rect.y=int(HEIGHT/2)
+    score=0
+    return score
+
 #bird
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x,y):
@@ -88,7 +95,7 @@ class Bird(pygame.sprite.Sprite):
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x,y, position):
-        pygame.sprite.Sprite.__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.image=pygame.image.load("images/pipe.png")
         self.rect=self.image.get_rect()
         #position 1 is from the top, -1 is from the bottom
@@ -156,6 +163,41 @@ while running:
     if flappy.rect.bottom>=768:
         game_over=True
         flying=False
+
+    
+    #generate new pipes
+    if flying==True and game_over==False:
+        time_now=pygame.time.get_ticks()
+        if time_now-last_pipe>pipe_frequency:
+            pipe_height=random.randint(-100,100)
+            btm_pipe=Pipe(WIDTH,int(HEIGHT/2)+pipe_height,-1)
+            top_pipe=Pipe(WIDTH,int(HEIGHT/2)+pipe_height,1)
+            pipe_group.add(btm_pipe)
+            pipe_group.add(top_pipe)
+            last_pipe=time_now
+        pipe_group.update()
+        ground_scroll-=scroll_speed
+        if abs(ground_scroll)>35:
+            ground_scroll=0
+    
+    #check for game over and reset
+    if game_over==True:
+        if restart_btn.draw():
+            game_over=False
+            score=reset_game()
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            running=False
+            pygame.quit()
+            exit()
+        if(event.type==pygame.MOUSEBUTTONDOWN and flying==False and game_over==False):
+            flying=True
+    pygame.display.update()
+
+pygame.quit() 
+        
+
+
      
 
 
